@@ -1,0 +1,17 @@
+.pagin-list {
+   list-style: none;
+   color: $-blue-2;
+   font-weight: 600;
+   text-decoration: none;
+   &.active {
+      background-color: $-blue-5;
+      border-radius: 4px;
+   }
+   .pagin-link {
+      text-decoration: none;
+   }
+   &:hover {
+      text-decoration: none;
+      color: $-blue-2;
+   }
+}
