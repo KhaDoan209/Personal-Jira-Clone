@@ -12,7 +12,6 @@ export const loginAction = (data: FormLoginModel, navigate: NavigateFunction) =>
         try {
             const result = await logInService(data)
             localStorage.setItem(USER_LOGIN, JSON.stringify(result.data.content));
-            console.log(result.data.content.accessToken)
             localStorage.setItem(ACCESS_TOKEN, result.data.content.accessToken);
             const content: SignedInAccountModel = result.data.content
             alert('Đăng nhập thành công')
@@ -23,4 +22,17 @@ export const loginAction = (data: FormLoginModel, navigate: NavigateFunction) =>
             console.log(error);
         }
     };
+}
+
+export const logoutAction = (navigate: NavigateFunction) => {
+    return (dispatch: DispatchType) => {
+        try {
+            localStorage.removeItem(USER_LOGIN)
+            localStorage.removeItem(ACCESS_TOKEN);
+
+            navigate('/login')
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }

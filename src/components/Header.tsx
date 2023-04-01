@@ -1,16 +1,25 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { DispatchType, RootState } from '../redux/configStore';
+import { useDispatch } from 'react-redux';
+import { logoutAction } from '../redux/action/accountAction';
+
 const Header: React.FC = () => {
+   const navigate = useNavigate();
    const showActiveStyle = () => {
       return ({ isActive }: any) =>
-         isActive ? 'nav-link bg-primary' : 'nav-link';
+         isActive ? 'nav-link active-link' : 'nav-link';
    };
    const signedInAccount = useSelector(
       (state: RootState) => state.accountReducer.signedInAccount
    );
-   const handleOnLogOut = () => {};
+   console.log(signedInAccount);
+   const dispatch: DispatchType = useDispatch();
+   const handleOnLogOut = () => {
+      dispatch(logoutAction(navigate));
+      document.getElementById('closeLogout')?.click();
+   };
    const renderModalLogOut = () => {
       return (
          <div
@@ -29,6 +38,7 @@ const Header: React.FC = () => {
                      <button
                         type='button'
                         className='btn-close'
+                        id='closeLogout'
                         data-bs-dismiss='modal'
                         aria-label='Close'
                      />
@@ -44,6 +54,7 @@ const Header: React.FC = () => {
                      <button
                         type='button'
                         className='btn btn-danger'
+                        onClick={handleOnLogOut}
                      >
                         Log Out
                      </button>
@@ -94,10 +105,10 @@ const Header: React.FC = () => {
                   </ul>
                   <ul className='navbar-nav  d-flex justify-content-end'>
                      <li className='nav-item'>
-                        {signedInAccount ? (
+                        {Object.keys(signedInAccount).length > 0 ? (
                            <div className='d-flex'>
                               <a className='nav-link'>
-                                 Hello {signedInAccount.email}
+                                 {signedInAccount.email}
                               </a>
                               <button
                                  data-bs-toggle='modal'

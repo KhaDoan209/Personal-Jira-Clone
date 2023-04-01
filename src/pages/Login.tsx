@@ -5,6 +5,7 @@ import { DispatchType } from '../redux/configStore';
 import * as yup from 'yup';
 import { FormLoginModel } from '../models/AccountModel';
 import { loginAction } from '../redux/action/accountAction';
+import * as Yup from 'yup';
 type Props = {};
 const Login = (props: Props) => {
    const navigate = useNavigate();
@@ -14,7 +15,10 @@ const Login = (props: Props) => {
          email: '',
          password: '',
       },
-      // validationSchema:{},
+      validationSchema: Yup.object({
+         email: Yup.string().required('Email is required'),
+         password: Yup.string().required('Password is required'),
+      }),
       onSubmit: (values: FormLoginModel) => {
          dispatch(loginAction(values, navigate));
       },
@@ -32,19 +36,27 @@ const Login = (props: Props) => {
                </label>
                <input
                   onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   name='email'
                   type='text'
                   className='form-control'
                />
+               {formik.errors.email ? (
+                  <span className='text-danger'>{formik.errors.email}</span>
+               ) : null}
             </div>
             <div className='mb-3'>
                <label className='form-label'>Password</label>
                <input
                   onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   name='password'
                   type='password'
                   className='form-control'
                />
+               {formik.errors.password ? (
+                  <span className='text-danger'>{formik.errors.password}</span>
+               ) : null}
             </div>
             <div className='w-100 d-flex justify-content-center'>
                <button

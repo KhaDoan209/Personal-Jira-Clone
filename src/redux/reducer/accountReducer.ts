@@ -1,8 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { SignedInAccountModel } from '../../models/AccountModel';
 import { AccountState } from '../states/AccountState';
-import { USER_LOGIN } from '../../utils/setting';
-
+import { ACCESS_TOKEN, USER_LOGIN } from '../../utils/setting';
 
 const initialState: AccountState = {
     signedInAccount: JSON.parse(localStorage.getItem(USER_LOGIN) || '{}')
@@ -14,7 +13,7 @@ const accountReducer = createSlice({
     reducers: {
         loginReducer: (state: AccountState, action: PayloadAction<SignedInAccountModel>) => {
             state.signedInAccount = action.payload
-        }
+        },
     }
 });
 
