@@ -14,7 +14,6 @@ const Header: React.FC = () => {
    const signedInAccount = useSelector(
       (state: RootState) => state.accountReducer.signedInAccount
    );
-   console.log(signedInAccount);
    const dispatch: DispatchType = useDispatch();
    const handleOnLogOut = () => {
       dispatch(logoutAction(navigate));

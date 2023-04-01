@@ -20,18 +20,25 @@ import { useNavigate } from 'react-router-dom';
 import { getListUserAction } from '../redux/action/userAction';
 import { getAllStatusAction } from '../redux/action/taskAction';
 import * as Yup from 'yup';
+import { LOGNED_IN } from '../utils/setting';
 const Home = () => {
    const navigate = useNavigate();
    const editorRef: any = useRef();
    const dispatch: DispatchType = useDispatch();
+   const [idToDelete, setIdToDelete] = useState(0);
    const projectList = useSelector(
       (state: RootState) => state.projectReducer.listProject
+   );
+   const userLogin = useSelector(
+      (state: RootState) => state.accountReducer.signedInAccount
    );
 
    useEffect(() => {
       dispatch(getListProjectAction());
-      dispatch(getListUserAction());
-      dispatch(getAllStatusAction());
+      if (LOGNED_IN !== null) {
+         dispatch(getListUserAction());
+         dispatch(getAllStatusAction());
+      }
    }, []);
    const formik = useFormik<CreateProjectModel>({
       initialValues: {
@@ -69,7 +76,58 @@ const Home = () => {
    const handleOnDelete = (id: number) => {
       dispatch(deleteProjectAction(id));
    };
-
+   const renderDeleteProjectModal = () => {
+      return (
+         <div
+            className='modal'
+            tabIndex={-1}
+            id='deleteProjectModal'
+         >
+            <div className='modal-dialog modal-dialog-centered'>
+               <div className='modal-content'>
+                  <div className='modal-header'>
+                     <h5 className='modal-title'>
+                        Do you want to delete project ?
+                     </h5>
+                     <button
+                        type='button'
+                        className='btn-close'
+                        data-bs-dismiss='modal'
+                        aria-label='Close'
+                     />
+                  </div>
+                  <div className='modal-footer'>
+                     <button
+                        type='button'
+                        className='btn btn-secondary'
+                        data-bs-dismiss='modal'
+                     >
+                        Close
+                     </button>
+                     <button
+                        type='button'
+                        className='btn btn-danger'
+                        onClick={() => {
+                           if (LOGNED_IN === null) {
+                              alertToast.info(
+                                 'Please log in first',
+                                 'top-center',
+                                 Bounce,
+                                 'dark'
+                              );
+                           } else {
+                              handleOnDelete(idToDelete);
+                           }
+                        }}
+                     >
+                        Delete
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </div>
+      );
+   };
    const renderTableProject = (currentItems: any) => {
       if (currentItems.length > 0) {
          return (
@@ -126,8 +184,19 @@ const Home = () => {
                            </th>
                            <td
                               onClick={() => {
-                                 dispatch(getProjectDetailAction(project.id));
-                                 navigate(`dashboard/${project.id}`);
+                                 if (LOGNED_IN === null) {
+                                    alertToast.info(
+                                       'Please log in first',
+                                       'top-center',
+                                       Bounce,
+                                       'dark'
+                                    );
+                                 } else {
+                                    dispatch(
+                                       getProjectDetailAction(project.id)
+                                    );
+                                    navigate(`dashboard/${project.id}`);
+                                 }
                               }}
                               className='py-2 link-primary pointer'
                            >
@@ -172,23 +241,35 @@ const Home = () => {
                            <td className='py-2'>
                               <button
                                  onClick={() => {
-                                    dispatch(
-                                       getProjectDetailAction(project.id)
-                                    );
-                                    navigate(`detail/${project.id}`);
+                                    if (LOGNED_IN === null) {
+                                       alertToast.info(
+                                          'Please log in first',
+                                          'top-center',
+                                          Bounce,
+                                          'dark'
+                                       );
+                                    } else {
+                                       dispatch(
+                                          getProjectDetailAction(project.id)
+                                       );
+                                       navigate(`detail/${project.id}`);
+                                    }
                                  }}
                                  className='btn btn-outline-warning'
                               >
                                  <i className='fa-solid fa-pen-nib'></i>
                               </button>
                               <button
-                                 onClick={() => {
-                                    handleOnDelete(project.id);
-                                 }}
+                                 data-bs-toggle='modal'
+                                 data-bs-target='#deleteProjectModal'
                                  className='btn btn-outline-danger ms-2'
+                                 onClick={() => {
+                                    setIdToDelete(project.id);
+                                 }}
                               >
                                  <i className='fa-regular fa-trash-can'></i>
                               </button>
+                              {renderDeleteProjectModal()}
                            </td>
                         </tr>
                      );
@@ -337,15 +418,19 @@ const Home = () => {
          <div className='d-flex justify-content-between align-items-between'>
             <h1 className='mb-4'>Project Dashboard</h1>
             <div>
-               <button
-                  type='button'
-                  data-bs-toggle='offcanvas'
-                  data-bs-target='#createProjectCanvas'
-                  aria-controls='offcanvasExample'
-                  className='btn btn-primary'
-               >
-                  Create new project
-               </button>
+               {LOGNED_IN !== null ? (
+                  <button
+                     type='button'
+                     data-bs-toggle='offcanvas'
+                     data-bs-target='#createProjectCanvas'
+                     aria-controls='offcanvasExample'
+                     className='btn btn-primary'
+                  >
+                     Create new project
+                  </button>
+               ) : (
+                  ''
+               )}
                {renderCreateProjectForm()}
             </div>
          </div>

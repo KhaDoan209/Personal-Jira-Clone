@@ -560,6 +560,7 @@ const ProjectDashboard = (props: Props) => {
       formik.setFieldValue('listUserAsign', listAssignedUser);
       formik.handleSubmit();
    };
+
    return (
       <div className='container'>
          <div className='d-flex justify-content-between align-items-baseline'>

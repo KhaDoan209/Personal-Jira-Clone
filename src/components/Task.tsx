@@ -44,7 +44,6 @@ const Task = ({ lstTaskDeTail, projectId }: Props) => {
       });
    }
    const editorRef: any = useRef();
-   console.log(taskDetail);
    const projectDetail: any = useSelector(
       (state: RootState) => state.projectReducer.projectDetail
    );
@@ -493,6 +492,7 @@ const Task = ({ lstTaskDeTail, projectId }: Props) => {
       formik.setFieldValue('listUserAsign', listAssignedUser);
       formik.handleSubmit();
    };
+
    return (
       <div>
          {lstTaskDeTail.map((item: any) => {

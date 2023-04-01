@@ -2,7 +2,8 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { DOMAIN } from '../utils/setting';
 import { TOKEN_CYBERSOFT, ACCESS_TOKEN } from '../utils/setting';
 import { AxiosResponse, AxiosError } from 'axios';
-
+import { alertToast } from '../utils/alert';
+import { Bounce } from 'react-toastify';
 export const http = axios.create({
    baseURL: DOMAIN,
    timeout: 30000,
@@ -33,7 +34,11 @@ http.interceptors.response.use(
    },
    function (error) {
       if (error.response.data) {
-         console.log(error.response.data);
+         if (error.response.data.statusCode === 403) {
+            alertToast.error(`${error.response.data.content}`, 'top-center', Bounce, 'colored')
+         } else {
+            alertToast.error(`${error.response.data.message}`, 'top-center', Bounce, 'colored')
+         }
          return Promise.reject(error.response.data);
       }
       return Promise.reject(error);
